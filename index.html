@@ -314,18 +314,25 @@
                     headers: { 'Content-Type': 'application/json' },
                 });
 
+                // Jika respons dari server tidak "ok" (misal: status 403, 404, 500),
+                // kita coba baca sebagai teks untuk melihat pesan error HTML dari Google.
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server merespons dengan status ${response.status}. Pesan: ${errorText}`);
+                }
+
                 const result = await response.json();
 
                 if (result.status !== 'success') {
-                    throw new Error(result.message || 'Terjadi kesalahan di server.');
+                    throw new Error(result.message || 'Server menunjukkan kegagalan, namun merespons 200 OK.');
                 }
 
                 document.getElementById('admin-controls').classList.add('hidden');
                 showPage('leaderboard-page'); // Pindah ke leaderboard setelah berhasil
 
             } catch (error) {
-                console.error('Gagal mengirim kuis:', error);
-                alert('Gagal mengirimkan jawaban: ' + error.message);
+                console.error('Detail Kegagalan Pengiriman:', error);
+                alert('Gagal mengirimkan jawaban. Silakan buka console (tekan F12) untuk melihat detail teknis. Pesan error: ' + error.message);
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = 'Kumpulkan Jawaban';
