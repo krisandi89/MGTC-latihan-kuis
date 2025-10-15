@@ -46,7 +46,7 @@
 <body class="text-gray-800 flex items-center justify-center min-h-screen">
 
     <div id="app" class="w-full max-w-5xl mx-auto p-4 md:p-8">
-        
+
         <!-- Halaman Selamat Datang -->
         <div id="welcome-page" class="page active bg-white p-8 rounded-xl shadow-lg text-center">
             <h1 class="text-3xl font-bold text-gray-900 mb-8">Mendesain Jalan Tambang Untuk Kendaraan Berat</h1>
@@ -78,7 +78,7 @@
                  <button onclick="showPage('welcome-page')" class="mt-4 text-sm text-maroon hover:underline">Kembali</button>
              </div>
         </div>
-        
+
         <!-- Halaman Login Mahasiswa -->
         <div id="student-login-page" class="page bg-white p-8 rounded-xl shadow-lg text-center">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Mulai Kuis</h1>
@@ -100,7 +100,7 @@
                     <h1 class="text-2xl font-bold text-gray-900">Lembar Jawaban</h1>
                     <p class="text-gray-600">Peserta: <span id="display-student-name" class="font-semibold"></span></p>
                 </div>
-                
+
                 <!-- Bagian 1: Analisis Sensitivitas -->
                 <div class="mb-10">
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 1: Analisis Sensitivitas Ketebalan</h2>
@@ -166,7 +166,7 @@
                         </table>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 text-center">
                     <button onclick="submitQuiz()" class="w-full max-w-xs btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">
                         Kumpulkan Jawaban
@@ -215,17 +215,30 @@
         const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 15, 34, 47, 17, 26, 33 ];
         // -------------------
 
-        let submissions = [];
+        let quizStartTime;
+        let leaderboardInterval;
 
         const pages = document.querySelectorAll('.page');
         const displayStudentName = document.getElementById('display-student-name');
         const leaderboardBody = document.getElementById('leaderboard-body');
-        
+
         function showPage(pageId) {
             pages.forEach(page => {
                 page.classList.remove('active');
             });
             document.getElementById(pageId).classList.add('active');
+
+            // Hentikan interval refresh jika kita pindah dari halaman leaderboard
+            if (leaderboardInterval) {
+                clearInterval(leaderboardInterval);
+                leaderboardInterval = null;
+            }
+
+            // Mulai interval refresh jika kita masuk ke halaman leaderboard
+            if (pageId === 'leaderboard-page') {
+                updateLeaderboard(); // Panggil sekali saat masuk
+                leaderboardInterval = setInterval(updateLeaderboard, 5000); // Refresh setiap 5 detik
+            }
         }
 
         function loginAdmin() {
@@ -234,13 +247,12 @@
 
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 document.getElementById('admin-controls').classList.remove('hidden');
-                updateLeaderboard();
                 showPage('leaderboard-page');
             } else {
                 alert('Username atau password salah!');
             }
         }
-        
+
         function logout() {
             document.getElementById('admin-username').value = 'admin';
             document.getElementById('admin-password').value = 'password123';
@@ -248,10 +260,9 @@
         }
 
         function clearData() {
-            if (confirm('Apakah Anda yakin ingin menghapus semua data leaderboard? Aksi ini tidak dapat dibatalkan.')) {
-                submissions = [];
-                updateLeaderboard();
-            }
+            // Fungsi ini sengaja dinonaktifkan di sisi klien untuk keamanan.
+            // Implementasi penghapusan data harus dilakukan di backend dengan otorisasi yang tepat.
+            alert('Fungsi hapus data memerlukan implementasi backend yang aman dan untuk sementara dinonaktifkan.');
         }
 
         function startQuiz() {
@@ -261,10 +272,11 @@
                 return;
             }
             displayStudentName.textContent = studentName;
+            quizStartTime = new Date(); // Catat waktu mulai kuis
             showPage('quiz-page');
         }
 
-        function submitQuiz() {
+        async function submitQuiz() {
             const studentName = displayStudentName.textContent;
             let score = 0;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
@@ -282,35 +294,82 @@
                 alert('Harap isi semua kolom jawaban sebelum mengumpulkan.');
                 return;
             }
-            
-            submissions.push({ name: studentName, score: score, time: new Date() });
-            submissions.sort((a, b) => b.score - a.score || a.time - b.time);
 
-            document.getElementById('admin-controls').classList.add('hidden');
-            updateLeaderboard();
-            showPage('leaderboard-page');
+            const submitButton = document.querySelector('#quiz-page button');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
+
+            const submissionData = {
+                Nama: studentName,
+                Skor: score,
+                Waktu: (new Date() - quizStartTime) / 1000 // Waktu pengerjaan dalam detik
+            };
+
+            try {
+                // `location.href` akan otomatis menjadi URL Web App saat dijalankan dari sana
+                const response = await fetch(location.href, {
+                    method: 'POST',
+                    redirect: 'follow', // Diperlukan oleh Google Apps Script
+                    body: JSON.stringify(submissionData),
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                const result = await response.json();
+
+                if (result.status !== 'success') {
+                    throw new Error(result.message || 'Terjadi kesalahan di server.');
+                }
+
+                document.getElementById('admin-controls').classList.add('hidden');
+                showPage('leaderboard-page'); // Pindah ke leaderboard setelah berhasil
+
+            } catch (error) {
+                console.error('Gagal mengirim kuis:', error);
+                alert('Gagal mengirimkan jawaban: ' + error.message);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Kumpulkan Jawaban';
+            }
         }
 
         function updateLeaderboard() {
-            leaderboardBody.innerHTML = '';
-            if (submissions.length === 0) {
-                 leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data.</td></tr>';
-                 return;
-            }
-            submissions.forEach((sub, index) => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="p-3 border font-semibold">${index + 1}</td>
-                    <td class="p-3 border">${sub.name}</td>
-                    <td class="p-3 border">${sub.score} / ${CORRECT_ANSWERS.length}</td>
-                    <td class="p-3 border text-sm text-gray-600">${sub.time.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                `;
-                leaderboardBody.appendChild(row);
-            });
-        }
+            // Tampilkan pesan loading terlebih dahulu
+            leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Memuat data terbaru...</td></tr>';
 
+            // Panggil fungsi `getLeaderboardData` di `Code.gs`
+            google.script.run
+                .withSuccessHandler(data => {
+                    leaderboardBody.innerHTML = ''; // Kosongkan tabel
+
+                    if (!data || data.length === 0 || (data.status && data.status === 'error')) {
+                        leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data.</td></tr>';
+                        if(data && data.message) console.error("Error dari backend: " + data.message);
+                        return;
+                    }
+
+                    let rank = 1;
+                    data.forEach(sub => {
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-gray-50';
+
+                        // Konversi timestamp dari string ke objek Date untuk format yang benar
+                        const submissionTime = new Date(sub.timestamp).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+
+                        row.innerHTML = `
+                            <td class="p-3 border font-semibold">${rank++}</td>
+                            <td class="p-3 border">${sub.nama}</td>
+                            <td class="p-3 border">${sub.skor}</td>
+                            <td class="p-3 border text-sm text-gray-600">${submissionTime}</td>
+                        `;
+                        leaderboardBody.appendChild(row);
+                    });
+                })
+                .withFailureHandler(error => {
+                    console.error('Gagal memuat leaderboard:', error);
+                    leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-red-600">Gagal terhubung ke server. Memeriksa kembali...</td></tr>';
+                })
+                .getLeaderboardData();
+        }
     </script>
 </body>
 </html>
-

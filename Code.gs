@@ -69,10 +69,54 @@ function doPost(e) {
 }
 
 /**
- * Fungsi ini hanya untuk pengujian awal atau jika ada yang mengakses URL via browser.
+ * Fungsi ini akan dijalankan ketika ada permintaan GET ke URL web app.
+ * Ini akan menyajikan halaman HTML utama dari file index.html.
  */
 function doGet(e) {
-  return HtmlService.createHtmlOutput("Endpoint Google Apps Script untuk Leaderboard sudah aktif. Gunakan metode POST untuk mengirim data.");
+  return HtmlService.createHtmlOutputFromFile('index.html')
+      .setTitle("Kuis Interaktif Leaderboard")
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/**
+ * Fungsi ini diekspos agar bisa dipanggil dari sisi klien (JavaScript)
+ * untuk mengambil data leaderboard terbaru dalam format JSON.
+ */
+function getLeaderboardData() {
+  try {
+    var leaderboardSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName("Leaderboard");
+    if (!leaderboardSheet) {
+      // Jika sheet belum ada, kembalikan array kosong
+      return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var data = leaderboardSheet.getDataRange().getValues();
+
+    // Jika sheet kosong atau hanya ada header, kembalikan array kosong
+    if (data.length <= 1) {
+      return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var headers = data.shift(); // Ambil header
+
+    // Ubah array of arrays menjadi array of objects
+    var jsonData = data.map(function(row) {
+      var obj = {};
+      headers.forEach(function(header, index) {
+        // Normalisasi nama header agar mudah digunakan sebagai key di JavaScript
+        var key = header.toString().toLowerCase().replace(/ /g, '');
+        obj[key] = row[index];
+      });
+      return obj;
+    });
+
+    return ContentService.createTextOutput(JSON.stringify(jsonData)).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    Logger.log("Error di getLeaderboardData: " + error.toString());
+    // Kembalikan array kosong jika terjadi error
+    return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": error.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 /**
