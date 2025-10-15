@@ -1,5 +1,5 @@
 // Ganti dengan ID Spreadsheet Anda
-var SPREADSHEET_ID = "YOUR_SPREADSHEET_ID";
+var SPREADSHEET_ID = "17yJO8_g1GAjv958x_b20mLq66q72A6ZoR4W8voU7C5E";
 
 // Nama sheet untuk menyimpan data mentah
 var SHEET_NAME = "Data";
