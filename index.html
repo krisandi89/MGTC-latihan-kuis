@@ -358,7 +358,7 @@
                         row.innerHTML = `
                             <td class="p-3 border font-semibold">${rank++}</td>
                             <td class="p-3 border">${sub.nama}</td>
-                            <td class="p-3 border">${sub.skor}</td>
+                            <td class="p-3 border">${sub.skor} / ${CORRECT_ANSWERS.length}</td>
                             <td class="p-3 border text-sm text-gray-600">${submissionTime}</td>
                         `;
                         leaderboardBody.appendChild(row);
