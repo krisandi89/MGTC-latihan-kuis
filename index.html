@@ -171,6 +171,7 @@
                                 <th class="p-3 font-semibold text-gray-700 border">Nama Mahasiswa</th>
                                 <th class="p-3 font-semibold text-gray-700 border">Skor</th>
                                 <th class="p-3 font-semibold text-gray-700 border">Waktu Mengumpulkan</th>
+                                <th class="p-3 font-semibold text-gray-700 border">Keterangan</th>
                             </tr>
                         </thead>
                         <tbody id="leaderboard-body"></tbody>
@@ -206,7 +207,6 @@
         let leaderboardInterval = null;
         
         function showPage(pageId) {
-            // Hentikan interval reload jika ada saat pindah halaman
             if (leaderboardInterval) {
                 clearInterval(leaderboardInterval);
                 leaderboardInterval = null;
@@ -215,10 +215,9 @@
             pages.forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
 
-            // Jika halaman yang dituju adalah leaderboard, mulai auto-reload
             if (pageId === 'leaderboard-page') {
-                fetchAndShowLeaderboard(); // Muat data pertama kali
-                leaderboardInterval = setInterval(fetchAndShowLeaderboard, 3000); // Mulai reload setiap 3 detik
+                fetchAndShowLeaderboard(); 
+                leaderboardInterval = setInterval(fetchAndShowLeaderboard, 3000);
             }
         }
 
@@ -253,9 +252,8 @@
             const leaderboardBody = document.getElementById('leaderboard-body');
             const leaderboardSubtitle = document.getElementById('leaderboard-subtitle');
             
-            // Jangan tampilkan pesan "Memuat..." jika tabel sudah ada isinya, agar tidak berkedip
             if (leaderboardBody.innerHTML.trim() === '' || leaderboardBody.innerText.includes("Gagal")) {
-                 leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Memuat data leaderboard...</td></tr>';
+                 leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Memuat data leaderboard...</td></tr>';
             }
             
             fetch(GOOGLE_SHEET_URL)
@@ -271,7 +269,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching leaderboard data:', error);
-                    leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-red-500">Gagal memuat data. Periksa koneksi atau URL Google Script.</td></tr>';
+                    leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-red-500">Gagal memuat data. Periksa koneksi atau URL Google Script.</td></tr>';
                 });
         }
 
@@ -280,7 +278,7 @@
             leaderboardBody.innerHTML = ''; 
 
             if (!data || data.length === 0 || data.error) {
-                leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data. Jadilah yang pertama!</td></tr>';
+                leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Belum ada data. Jadilah yang pertama!</td></tr>';
                 return;
             }
 
@@ -288,12 +286,19 @@
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 const submissionTime = new Date(sub.timestamp).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                const scoreValue = parseInt(sub.score.split('/')[0].trim(), 10);
+                
+                let remarksCell = '<td class="p-3 border text-green-600 font-bold">Sempurna! ✨</td>';
+                if (scoreValue < CORRECT_ANSWERS.length) {
+                    remarksCell = '<td class="p-3 border text-red-600 font-bold">Belajar lagi yaah!</td>';
+                }
 
                 row.innerHTML = `
                     <td class="p-3 border font-semibold">${index + 1}</td>
                     <td class="p-3 border">${sub.name}</td>
                     <td class="p-3 border">${sub.score}</td>
                     <td class="p-3 border text-sm text-gray-600">${submissionTime}</td>
+                    ${remarksCell}
                 `;
                 leaderboardBody.appendChild(row);
             });
