@@ -1,5 +1,5 @@
 // Ganti dengan ID Spreadsheet Anda
-var SPREADSHEET_ID = "17yJO8_g1GAjv958x_b20mLq66q72A6ZoR4W8voU7C5E";
+var SPREADSHEET_ID = "17yJO8_g1GAjv958x_b20mLq66q72A6ZoR4W8voU7C5E"; 
 
 // Nama sheet untuk menyimpan data mentah
 var SHEET_NAME = "Data";
@@ -17,12 +17,12 @@ function doPost(e) {
       // Validasi data dasar (pastikan objek tidak kosong)
       if (data && typeof data === 'object' && Object.keys(data).length > 0) {
         var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
-
+        
         // Jika sheet "Data" tidak ada, buat baru
         if (!sheet) {
           sheet = SpreadsheetApp.openById(SPREADSHEET_ID).insertSheet(SHEET_NAME);
           // Tentukan header jika sheet baru dibuat (sesuaikan dengan data Anda)
-          sheet.appendRow(["Timestamp", "Nama", "Skor", "Waktu"]);
+          sheet.appendRow(["Timestamp", "Nama", "Skor", "Waktu"]); 
         }
 
         // Ambil header dari sheet untuk mencocokkan data
@@ -60,7 +60,7 @@ function doPost(e) {
   } catch (error) {
     // Logging error untuk debugging
     Logger.log(error.toString());
-
+    
     // Kirim respons error
     return ContentService
       .createTextOutput(JSON.stringify({ "status": "error", "message": error.toString() }))
@@ -76,7 +76,7 @@ function doGet(e) {
 }
 
 /**
- * Fungsi ini membaca data dari sheet "Data", mengurutkannya,
+ * Fungsi ini membaca data dari sheet "Data", mengurutkannya, 
  * dan menampilkannya di sheet "Leaderboard".
  */
 function updateLeaderboard() {
@@ -95,15 +95,15 @@ function updateLeaderboard() {
   // Ambil semua data dari sheet "Data", kecuali header
   var dataRange = dataSheet.getDataRange();
   var dataValues = dataRange.getValues();
-
+  
   // Jika tidak ada data (hanya header), hentikan eksekusi
   if (dataValues.length <= 1) {
     leaderboardSheet.appendRow(["Leaderboard masih kosong."]);
     return;
   }
-
+  
   var headers = dataValues.shift(); // Ambil dan simpan header
-
+  
   // Cari indeks kolom "Skor" dan "Waktu" (case-insensitive)
   var scoreIndex = -1;
   var timeIndex = -1;
@@ -130,20 +130,20 @@ function updateLeaderboard() {
     if (scoreB !== scoreA) {
       return scoreB - scoreA;
     }
-
+    
     // Jika Skor sama, urutkan berdasarkan Waktu (Ascending), jika ada
     if (timeIndex !== -1) {
       var timeA = parseFloat(a[timeIndex]) || Infinity;
       var timeB = parseFloat(b[timeIndex]) || Infinity;
       return timeA - timeB;
     }
-
+    
     return 0; // Jika skor sama dan tidak ada waktu
   });
 
   // Tambahkan kembali header ke sheet Leaderboard
   leaderboardSheet.appendRow(headers);
-
+  
   // Tulis data yang sudah diurutkan ke sheet Leaderboard
   leaderboardSheet.getRange(2, 1, dataValues.length, headers.length).setValues(dataValues);
 }
