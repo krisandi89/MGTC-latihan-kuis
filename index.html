@@ -195,7 +195,7 @@
         // --- KONFIGURASI ---
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
-        const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 15, 34, 47, 17, 26, 33 ];
+        const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 14, 34, 47, 18, 28, 35 ];
         
         // --- URL WEB APP ANDA ---
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpSkPJp_T8DMljpvWVBHRCwxcd5FxYtzqD1uKKtkfMjVZuNzMY5S_aktkjZnst4IJ2kA/exec';
@@ -203,10 +203,23 @@
 
         const pages = document.querySelectorAll('.page');
         const displayStudentName = document.getElementById('display-student-name');
+        let leaderboardInterval = null;
         
         function showPage(pageId) {
+            // Hentikan interval reload jika ada saat pindah halaman
+            if (leaderboardInterval) {
+                clearInterval(leaderboardInterval);
+                leaderboardInterval = null;
+            }
+
             pages.forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
+
+            // Jika halaman yang dituju adalah leaderboard, mulai auto-reload
+            if (pageId === 'leaderboard-page') {
+                fetchAndShowLeaderboard(); // Muat data pertama kali
+                leaderboardInterval = setInterval(fetchAndShowLeaderboard, 3000); // Mulai reload setiap 3 detik
+            }
         }
 
         function loginAdmin() {
@@ -216,7 +229,6 @@
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 document.getElementById('admin-controls').classList.remove('hidden');
                 document.getElementById('student-submission-info').classList.add('hidden');
-                fetchAndShowLeaderboard();
                 showPage('leaderboard-page');
             } else {
                 alert('Username atau password salah!');
@@ -239,7 +251,12 @@
 
         function fetchAndShowLeaderboard() {
             const leaderboardBody = document.getElementById('leaderboard-body');
-            leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Memuat data leaderboard...</td></tr>';
+            const leaderboardSubtitle = document.getElementById('leaderboard-subtitle');
+            
+            // Jangan tampilkan pesan "Memuat..." jika tabel sudah ada isinya, agar tidak berkedip
+            if (leaderboardBody.innerHTML.trim() === '' || leaderboardBody.innerText.includes("Gagal")) {
+                 leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Memuat data leaderboard...</td></tr>';
+            }
             
             fetch(GOOGLE_SHEET_URL)
                 .then(response => {
@@ -249,6 +266,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    leaderboardSubtitle.textContent = 'Menampilkan data dari Google Sheet. (Diperbarui otomatis)';
                     updateLeaderboard(data);
                 })
                 .catch(error => {
@@ -314,7 +332,6 @@
                 skor: `${score} / ${CORRECT_ANSWERS.length}`
             };
 
-            // Mengirim data menggunakan 'text/plain' untuk melewati preflight CORS
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -324,13 +341,11 @@
                 body: JSON.stringify(dataToSend)
             })
             .then(() => {
-                // Beri jeda sedikit agar Google Sheet sempat memproses data sebelum diambil kembali
                 setTimeout(() => {
                     document.getElementById('admin-controls').classList.add('hidden');
                     document.getElementById('student-submission-info').classList.remove('hidden');
-                    fetchAndShowLeaderboard();
                     showPage('leaderboard-page');
-                }, 1500); // Jeda 1.5 detik
+                }, 1500); 
             })
             .catch(error => {
                 alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
