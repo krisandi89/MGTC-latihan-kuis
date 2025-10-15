@@ -38,6 +38,10 @@
         .btn-maroon:hover {
             background-color: var(--main-color-hover);
         }
+        .btn-maroon:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
         .text-maroon {
             color: var(--main-color);
         }
@@ -101,7 +105,7 @@
                     <p class="text-gray-600">Peserta: <span id="display-student-name" class="font-semibold"></span></p>
                 </div>
                 
-                <!-- Bagian 1: Analisis Sensitivitas -->
+                <!-- ... (Isi tabel kuis tetap sama) ... -->
                 <div class="mb-10">
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 1: Analisis Sensitivitas Ketebalan</h2>
                     <div class="overflow-x-auto">
@@ -113,24 +117,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="p-2 border font-medium">25</td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-medium">50</td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-medium">75</td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-medium">100</td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
+                                <tr><td class="p-2 border font-medium">25</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border font-medium">50</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border font-medium">75</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border font-medium">100</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <!-- Bagian 2: Analisis Nilai -->
                 <div>
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 2: Analisis Nilai (Value)</h2>
                     <div class="overflow-x-auto">
@@ -144,31 +138,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="p-2 border text-left font-medium">NX850 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border text-left font-medium">NX850 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border text-left font-medium">NX850 default (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border text-left font-medium">NX850 single layer (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border text-left font-medium">NX750 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border text-left font-medium">NX750 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td>
-                                </tr>
+                                <tr><td class="p-2 border text-left font-medium">NX850 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border text-left font-medium">NX850 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border text-left font-medium">NX850 default (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border text-left font-medium">NX850 single layer (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border text-left font-medium">NX750 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
+                                <tr><td class="p-2 border text-left font-medium">NX750 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 
                 <div class="mt-8 text-center">
-                    <button onclick="submitQuiz()" class="w-full max-w-xs btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">
+                    <button id="submit-btn" onclick="submitQuiz()" class="w-full max-w-xs btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">
                         Kumpulkan Jawaban
                     </button>
                 </div>
@@ -180,7 +162,7 @@
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <div class="text-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1>
-                    <p class="text-gray-600">Hasil kuis akan ditampilkan di sini.</p>
+                    <p class="text-gray-600">Hasil kuis akan ditampilkan di sini. Data ini bersifat lokal.</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -196,12 +178,14 @@
                     </table>
                 </div>
                 <div id="admin-controls" class="hidden mt-8 text-center space-x-4">
-                     <button onclick="clearData()" class="bg-red-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-red-700 transition-colors">
-                        Hapus Semua Data
-                    </button>
-                    <button onclick="logout()" class="bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-800 transition-colors">
+                     <p class="text-sm text-gray-500 mb-4">Sebagai admin, Anda melihat data lokal. Untuk data lengkap, silakan cek Google Sheet.</p>
+                     <button onclick="logout()" class="bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-800 transition-colors">
                         Logout
                     </button>
+                </div>
+                 <div id="student-submission-info" class="hidden mt-8 text-center">
+                    <p class="text-lg font-semibold text-green-600">Jawaban Anda telah berhasil dikirim!</p>
+                    <p class="text-gray-600">Anda sekarang dapat menutup halaman ini.</p>
                 </div>
             </div>
         </div>
@@ -213,7 +197,10 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
         const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 15, 34, 47, 17, 26, 33 ];
-        // -------------------
+        
+        // --- PENTING: GANTI DENGAN URL WEB APP ANDA ---
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycby-iVZtQBWsg3Ikiu0NaqcJ_s8yoSxVbYnLLCV9jzsMhe7zuZy3opKuRXa7PQXQA_nxUw/exec'; 
+        // ---------------------------------------------
 
         let submissions = [];
 
@@ -222,9 +209,7 @@
         const leaderboardBody = document.getElementById('leaderboard-body');
         
         function showPage(pageId) {
-            pages.forEach(page => {
-                page.classList.remove('active');
-            });
+            pages.forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
         }
 
@@ -234,6 +219,7 @@
 
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 document.getElementById('admin-controls').classList.remove('hidden');
+                document.getElementById('student-submission-info').classList.add('hidden');
                 updateLeaderboard();
                 showPage('leaderboard-page');
             } else {
@@ -242,16 +228,7 @@
         }
         
         function logout() {
-            document.getElementById('admin-username').value = 'admin';
-            document.getElementById('admin-password').value = 'password123';
             showPage('welcome-page');
-        }
-
-        function clearData() {
-            if (confirm('Apakah Anda yakin ingin menghapus semua data leaderboard? Aksi ini tidak dapat dibatalkan.')) {
-                submissions = [];
-                updateLeaderboard();
-            }
         }
 
         function startQuiz() {
@@ -282,19 +259,45 @@
                 alert('Harap isi semua kolom jawaban sebelum mengumpulkan.');
                 return;
             }
-            
-            submissions.push({ name: studentName, score: score, time: new Date() });
-            submissions.sort((a, b) => b.score - a.score || a.time - b.time);
 
-            document.getElementById('admin-controls').classList.add('hidden');
-            updateLeaderboard();
-            showPage('leaderboard-page');
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mengirim...';
+
+            const dataToSend = {
+                nama: studentName,
+                skor: `${score} / ${CORRECT_ANSWERS.length}`
+            };
+
+            fetch(GOOGLE_SHEET_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Penting untuk menghindari error CORS dengan Google Script
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(() => {
+                // Lokal submission untuk leaderboard sementara
+                submissions.push({ name: studentName, score: score, time: new Date() });
+                submissions.sort((a, b) => b.score - a.score || a.time - b.time);
+
+                document.getElementById('admin-controls').classList.add('hidden');
+                document.getElementById('student-submission-info').classList.remove('hidden');
+                updateLeaderboard();
+                showPage('leaderboard-page');
+            })
+            .catch(error => {
+                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
+                console.error('Error:', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kumpulkan Jawaban';
+            });
         }
 
         function updateLeaderboard() {
             leaderboardBody.innerHTML = '';
             if (submissions.length === 0) {
-                 leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data.</td></tr>';
+                 leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data yang dikirim dari sesi ini.</td></tr>';
                  return;
             }
             submissions.forEach((sub, index) => {
