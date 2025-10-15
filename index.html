@@ -105,7 +105,6 @@
                     <p class="text-gray-600">Peserta: <span id="display-student-name" class="font-semibold"></span></p>
                 </div>
                 
-                <!-- ... (Isi tabel kuis tetap sama) ... -->
                 <div class="mb-10">
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 1: Analisis Sensitivitas Ketebalan</h2>
                     <div class="overflow-x-auto">
@@ -162,7 +161,7 @@
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <div class="text-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1>
-                    <p class="text-gray-600">Hasil kuis akan ditampilkan di sini. Data ini bersifat lokal.</p>
+                    <p id="leaderboard-subtitle" class="text-gray-600">Menampilkan data dari Google Sheet.</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -178,14 +177,14 @@
                     </table>
                 </div>
                 <div id="admin-controls" class="hidden mt-8 text-center space-x-4">
-                     <p class="text-sm text-gray-500 mb-4">Sebagai admin, Anda melihat data lokal. Untuk data lengkap, silakan cek Google Sheet.</p>
+                     <p class="text-sm text-gray-500 mb-4">Untuk mengedit atau menghapus data, silakan lakukan langsung di Google Sheet.</p>
                      <button onclick="logout()" class="bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-800 transition-colors">
                         Logout
                     </button>
                 </div>
                  <div id="student-submission-info" class="hidden mt-8 text-center">
                     <p class="text-lg font-semibold text-green-600">Jawaban Anda telah berhasil dikirim!</p>
-                    <p class="text-gray-600">Anda sekarang dapat menutup halaman ini.</p>
+                    <p class="text-gray-600">Anda dapat melihat peringkat Anda di bawah ini.</p>
                 </div>
             </div>
         </div>
@@ -198,15 +197,12 @@
         const ADMIN_PASSWORD = 'password123';
         const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 15, 34, 47, 17, 26, 33 ];
         
-        // --- PENTING: GANTI DENGAN URL WEB APP ANDA ---
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycby-iVZtQBWsg3Ikiu0NaqcJ_s8yoSxVbYnLLCV9jzsMhe7zuZy3opKuRXa7PQXQA_nxUw/exec'; 
+        // --- PENTING: GANTI DENGAN URL WEB APP ANDA JIKA BERUBAH ---
+        const GOOGLE_SHEET_URL = 'PASTE_URL_WEB_APP_ANDA_DI_SINI';
         // ---------------------------------------------
-
-        let submissions = [];
 
         const pages = document.querySelectorAll('.page');
         const displayStudentName = document.getElementById('display-student-name');
-        const leaderboardBody = document.getElementById('leaderboard-body');
         
         function showPage(pageId) {
             pages.forEach(page => page.classList.remove('active'));
@@ -220,7 +216,7 @@
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 document.getElementById('admin-controls').classList.remove('hidden');
                 document.getElementById('student-submission-info').classList.add('hidden');
-                updateLeaderboard();
+                fetchAndShowLeaderboard();
                 showPage('leaderboard-page');
             } else {
                 alert('Username atau password salah!');
@@ -241,7 +237,56 @@
             showPage('quiz-page');
         }
 
+        function fetchAndShowLeaderboard() {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Memuat data leaderboard...</td></tr>';
+            
+            fetch(GOOGLE_SHEET_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    updateLeaderboard(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching leaderboard data:', error);
+                    leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-red-500">Gagal memuat data. Periksa koneksi atau URL Google Script.</td></tr>';
+                });
+        }
+
+        function updateLeaderboard(data) {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = ''; 
+
+            if (!data || data.length === 0 || data.error) {
+                leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data. Jadilah yang pertama!</td></tr>';
+                return;
+            }
+
+            data.forEach((sub, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                const submissionTime = new Date(sub.timestamp).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+
+                row.innerHTML = `
+                    <td class="p-3 border font-semibold">${index + 1}</td>
+                    <td class="p-3 border">${sub.name}</td>
+                    <td class="p-3 border">${sub.score}</td>
+                    <td class="p-3 border text-sm text-gray-600">${submissionTime}</td>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+
         function submitQuiz() {
+            if (GOOGLE_SHEET_URL === 'PASTE_URL_WEB_APP_ANDA_DI_SINI') {
+                alert('Konfigurasi belum selesai. Harap masukkan URL Web App Google Script di dalam file HTML.');
+                return;
+            }
+
             const studentName = displayStudentName.textContent;
             let score = 0;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
@@ -269,22 +314,23 @@
                 skor: `${score} / ${CORRECT_ANSWERS.length}`
             };
 
+            // Mengirim data menggunakan 'text/plain' untuk melewati preflight CORS
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Penting untuk menghindari error CORS dengan Google Script
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify(dataToSend)
             })
             .then(() => {
-                // Lokal submission untuk leaderboard sementara
-                submissions.push({ name: studentName, score: score, time: new Date() });
-                submissions.sort((a, b) => b.score - a.score || a.time - b.time);
-
-                document.getElementById('admin-controls').classList.add('hidden');
-                document.getElementById('student-submission-info').classList.remove('hidden');
-                updateLeaderboard();
-                showPage('leaderboard-page');
+                // Beri jeda sedikit agar Google Sheet sempat memproses data sebelum diambil kembali
+                setTimeout(() => {
+                    document.getElementById('admin-controls').classList.add('hidden');
+                    document.getElementById('student-submission-info').classList.remove('hidden');
+                    fetchAndShowLeaderboard();
+                    showPage('leaderboard-page');
+                }, 1500); // Jeda 1.5 detik
             })
             .catch(error => {
                 alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
@@ -293,26 +339,6 @@
                 submitBtn.textContent = 'Kumpulkan Jawaban';
             });
         }
-
-        function updateLeaderboard() {
-            leaderboardBody.innerHTML = '';
-            if (submissions.length === 0) {
-                 leaderboardBody.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data yang dikirim dari sesi ini.</td></tr>';
-                 return;
-            }
-            submissions.forEach((sub, index) => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="p-3 border font-semibold">${index + 1}</td>
-                    <td class="p-3 border">${sub.name}</td>
-                    <td class="p-3 border">${sub.score} / ${CORRECT_ANSWERS.length}</td>
-                    <td class="p-3 border text-sm text-gray-600">${sub.time.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</td>
-                `;
-                leaderboardBody.appendChild(row);
-            });
-        }
-
     </script>
 </body>
 </html>
