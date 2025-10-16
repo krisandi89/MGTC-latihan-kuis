@@ -64,129 +64,53 @@
             </div>
         </div>
 
-        <!-- Halaman Login Admin -->
+        <!-- Halaman Login Admin, Mahasiswa, Kuis (Tidak berubah) -->
         <div id="admin-login-page" class="page bg-white p-8 rounded-xl shadow-lg text-center">
              <h1 class="text-3xl font-bold text-gray-900 mb-6">Login Admin</h1>
              <div class="max-w-sm mx-auto">
-                 <div class="text-left mb-4">
-                     <label for="admin-username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                     <input type="text" id="admin-username" value="admin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-800 focus:border-red-800">
-                 </div>
-                 <div class="text-left mb-6">
-                     <label for="admin-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                     <input type="password" id="admin-password" value="password123" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-800 focus:border-red-800">
-                 </div>
-                 <button onclick="loginAdmin()" class="w-full bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors duration-300 shadow-sm">
-                     Login
-                 </button>
+                 <div class="text-left mb-4"><label for="admin-username" class="block text-sm font-medium text-gray-700 mb-2">Username</label><input type="text" id="admin-username" value="admin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-800 focus:border-red-800"></div>
+                 <div class="text-left mb-6"><label for="admin-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label><input type="password" id="admin-password" value="password123" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-800 focus:border-red-800"></div>
+                 <button onclick="loginAdmin()" class="w-full bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors duration-300 shadow-sm">Login</button>
                  <button onclick="showPage('welcome-page')" class="mt-4 text-sm text-maroon hover:underline">Kembali</button>
              </div>
         </div>
-        
-        <!-- Halaman Login Mahasiswa -->
         <div id="student-login-page" class="page bg-white p-8 rounded-xl shadow-lg text-center">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Mulai Kuis</h1>
             <p class="text-gray-600 mb-6">Silakan isi nama lengkap Anda</p>
             <div class="max-w-md mx-auto">
                 <label for="student-name" class="block text-left text-sm font-medium text-gray-700 mb-2">Nama Lengkap Mahasiswa</label>
                 <input type="text" id="student-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-800 focus:border-red-800" placeholder="Masukkan nama Anda...">
-                <button onclick="startQuiz()" class="w-full mt-6 btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">
-                    Mulai
-                </button>
+                <button onclick="startQuiz()" class="w-full mt-6 btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">Mulai</button>
                  <button onclick="showPage('welcome-page')" class="mt-4 text-sm text-maroon hover:underline">Kembali</button>
             </div>
         </div>
-
-        <!-- Halaman Kuis -->
         <div id="quiz-page" class="page">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <div class="text-center mb-8">
-                    <h1 class="text-2xl font-bold text-gray-900">Lembar Jawaban</h1>
-                    <p class="text-gray-600">Peserta: <span id="display-student-name" class="font-semibold"></span></p>
-                </div>
-                
-                <div class="mb-10">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 1: Analisis Sensitivitas Ketebalan</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-center border-collapse">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="p-3 font-medium text-gray-700 border">Surface rut depth (mm)</th>
-                                    <th class="p-3 font-medium text-gray-700 border">Thickness (mm)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="p-2 border font-medium">25</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border font-medium">50</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border font-medium">75</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border font-medium">100</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 2: Analisis Nilai (Value)</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-center border-collapse">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="p-3 font-medium text-gray-700 border">Option</th>
-                                    <th class="p-3 font-medium text-gray-700 border">Cost Saving (%)</th>
-                                    <th class="p-3 font-medium text-gray-700 border">Time Saving (%)</th>
-                                    <th class="p-3 font-medium text-gray-700 border">Environmental Saving (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="p-2 border text-left font-medium">NX850 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border text-left font-medium">NX850 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border text-left font-medium">NX850 default (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border text-left font-medium">NX850 single layer (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border text-left font-medium">NX750 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                                <tr><td class="p-2 border text-left font-medium">NX750 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="mt-8 text-center">
-                    <button id="submit-btn" onclick="submitQuiz()" class="w-full max-w-xs btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">
-                        Kumpulkan Jawaban
-                    </button>
-                </div>
+                <div class="text-center mb-8"><h1 class="text-2xl font-bold text-gray-900">Lembar Jawaban</h1><p class="text-gray-600">Peserta: <span id="display-student-name" class="font-semibold"></span></p></div>
+                <div class="mb-10"><h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 1: Analisis Sensitivitas Ketebalan</h2><div class="overflow-x-auto"><table class="w-full text-center border-collapse"><thead class="bg-gray-100"><tr><th class="p-3 font-medium text-gray-700 border">Surface rut depth (mm)</th><th class="p-3 font-medium text-gray-700 border">Thickness (mm)</th></tr></thead><tbody><tr><td class="p-2 border font-medium">25</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border font-medium">50</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border font-medium">75</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border font-medium">100</td> <td class="p-2 border"><input type="number" class="table-input"></td></tr></tbody></table></div></div>
+                <div><h2 class="text-xl font-semibold mb-4 text-gray-800">Bagian 2: Analisis Nilai (Value)</h2><div class="overflow-x-auto"><table class="w-full text-center border-collapse"><thead class="bg-gray-100"><tr><th class="p-3 font-medium text-gray-700 border">Option</th><th class="p-3 font-medium text-gray-700 border">Cost Saving (%)</th><th class="p-3 font-medium text-gray-700 border">Time Saving (%)</th><th class="p-3 font-medium text-gray-700 border">Environmental Saving (%)</th></tr></thead><tbody><tr><td class="p-2 border text-left font-medium">NX850 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border text-left font-medium">NX850 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border text-left font-medium">NX850 default (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border text-left font-medium">NX850 single layer (1.5m edge distance)</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border text-left font-medium">NX750 default</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr><tr><td class="p-2 border text-left font-medium">NX750 single layer</td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td> <td class="p-2 border"><input type="number" class="table-input"></td></tr></tbody></table></div></div>
+                <div class="mt-8 text-center"><button id="submit-btn" onclick="submitQuiz()" class="w-full max-w-xs btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">Kumpulkan Jawaban</button></div>
             </div>
         </div>
 
         <!-- Halaman Leaderboard -->
         <div id="leaderboard-page" class="page">
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <div class="text-center mb-6">
-                    <h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1>
-                    <p id="leaderboard-subtitle" class="text-gray-600">Menampilkan data dari Google Sheet.</p>
+                <div class="text-center mb-6"><h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1><p id="leaderboard-subtitle" class="text-gray-600">Menampilkan data dari Google Sheet.</p></div>
+                <div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead class="bg-gray-100"><tr><th class="p-3 font-semibold text-gray-700 border">Peringkat</th><th class="p-3 font-semibold text-gray-700 border">Nama Mahasiswa</th><th class="p-3 font-semibold text-gray-700 border">Skor</th><th class="p-3 font-semibold text-gray-700 border">Waktu Mengumpulkan</th><th class="p-3 font-semibold text-gray-700 border">Keterangan</th></tr></thead><tbody id="leaderboard-body"></tbody></table></div>
+                
+                <!-- Kotak Opsi Kesempatan Kedua -->
+                <div id="second-chance-prompt" class="hidden mt-6 text-center border-t pt-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Skor Anda belum sempurna.</h3>
+                    <p class="text-gray-600 my-2">Ingin mencoba memperbaikinya? Anda hanya punya **SATU** kesempatan lagi.</p>
+                    <div class="flex gap-4 justify-center mt-4">
+                        <button onclick="retryQuiz()" class="bg-green-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-green-700 transition-colors">Ya, Coba Lagi</button>
+                        <button onclick="declineRetry()" class="bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">Tidak, Terima Kasih</button>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="p-3 font-semibold text-gray-700 border">Peringkat</th>
-                                <th class="p-3 font-semibold text-gray-700 border">Nama Mahasiswa</th>
-                                <th class="p-3 font-semibold text-gray-700 border">Skor</th>
-                                <th class="p-3 font-semibold text-gray-700 border">Waktu Mengumpulkan</th>
-                                <th class="p-3 font-semibold text-gray-700 border">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-body"></tbody>
-                    </table>
-                </div>
-                <div id="admin-controls" class="hidden mt-8 text-center space-x-4">
-                     <p class="text-sm text-gray-500 mb-4">Untuk mengedit atau menghapus data, silakan lakukan langsung di Google Sheet.</p>
-                     <button onclick="logout()" class="bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-800 transition-colors">
-                        Logout
-                    </button>
-                </div>
-                 <div id="student-submission-info" class="hidden mt-8 text-center">
-                    <p class="text-lg font-semibold text-green-600">Jawaban Anda telah berhasil dikirim!</p>
-                    <p class="text-gray-600">Anda dapat melihat peringkat Anda di bawah ini.</p>
-                </div>
+
+                <div id="admin-controls" class="hidden mt-8 text-center space-x-4"><p class="text-sm text-gray-500 mb-4">Untuk mengedit atau menghapus data, silakan lakukan langsung di Google Sheet.</p><button onclick="logout()" class="bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-800 transition-colors">Logout</button></div>
+                <div id="student-submission-info" class="hidden mt-8 text-center"><p class="text-lg font-semibold text-green-600">Jawaban Anda telah berhasil dikirim!</p><p class="text-gray-600">Anda dapat melihat peringkat Anda di bawah ini.</p></div>
             </div>
         </div>
 
@@ -197,24 +121,22 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
         const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 14, 34, 47, 18, 28, 35 ];
-        
-        // --- URL WEB APP ANDA ---
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpSkPJp_T8DMljpvWVBHRCwxcd5FxYtzqD1uKKtkfMjVZuNzMY5S_aktkjZnst4IJ2kA/exec';
         // ---------------------------------------------
 
         const pages = document.querySelectorAll('.page');
         const displayStudentName = document.getElementById('display-student-name');
         let leaderboardInterval = null;
+        let currentAnswers = [];
+        let secondChanceUsed = false;
         
         function showPage(pageId) {
             if (leaderboardInterval) {
                 clearInterval(leaderboardInterval);
                 leaderboardInterval = null;
             }
-
             pages.forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-
             if (pageId === 'leaderboard-page') {
                 fetchAndShowLeaderboard(); 
                 leaderboardInterval = setInterval(fetchAndShowLeaderboard, 3000);
@@ -224,140 +146,110 @@
         function loginAdmin() {
             const username = document.getElementById('admin-username').value;
             const password = document.getElementById('admin-password').value;
-
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 document.getElementById('admin-controls').classList.remove('hidden');
                 document.getElementById('student-submission-info').classList.add('hidden');
                 showPage('leaderboard-page');
-            } else {
-                alert('Username atau password salah!');
-            }
+            } else { alert('Username atau password salah!'); }
         }
         
-        function logout() {
-            showPage('welcome-page');
-        }
+        function logout() { showPage('welcome-page'); }
 
         function startQuiz() {
             const studentName = document.getElementById('student-name').value.trim();
-            if (studentName === '') {
-                alert('Nama tidak boleh kosong!');
-                return;
-            }
+            if (studentName === '') { alert('Nama tidak boleh kosong!'); return; }
             displayStudentName.textContent = studentName;
+            // Reset status untuk pengerjaan baru
+            secondChanceUsed = false;
+            currentAnswers = [];
+            document.querySelectorAll('#quiz-page .table-input').forEach(input => input.value = '');
             showPage('quiz-page');
         }
 
         function fetchAndShowLeaderboard() {
             const leaderboardBody = document.getElementById('leaderboard-body');
             const leaderboardSubtitle = document.getElementById('leaderboard-subtitle');
-            
             if (leaderboardBody.innerHTML.trim() === '' || leaderboardBody.innerText.includes("Gagal")) {
                  leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Memuat data leaderboard...</td></tr>';
             }
-            
-            fetch(GOOGLE_SHEET_URL)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    leaderboardSubtitle.textContent = 'Menampilkan data dari Google Sheet. (Diperbarui otomatis)';
-                    updateLeaderboard(data);
-                })
-                .catch(error => {
-                    console.error('Error fetching leaderboard data:', error);
-                    leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-red-500">Gagal memuat data. Periksa koneksi atau URL Google Script.</td></tr>';
-                });
+            fetch(GOOGLE_SHEET_URL).then(response => { if (!response.ok) { throw new Error('Network response was not ok'); } return response.json(); }).then(data => { leaderboardSubtitle.textContent = 'Menampilkan data dari Google Sheet. (Diperbarui otomatis)'; updateLeaderboard(data); }).catch(error => { console.error('Error fetching leaderboard data:', error); leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-red-500">Gagal memuat data. Periksa koneksi atau URL Google Script.</td></tr>'; });
         }
 
         function updateLeaderboard(data) {
             const leaderboardBody = document.getElementById('leaderboard-body');
             leaderboardBody.innerHTML = ''; 
-
-            if (!data || data.length === 0 || data.error) {
-                leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Belum ada data. Jadilah yang pertama!</td></tr>';
-                return;
-            }
-
+            if (!data || data.length === 0 || data.error) { leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Belum ada data. Jadilah yang pertama!</td></tr>'; return; }
             data.forEach((sub, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 const submissionTime = new Date(sub.timestamp).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
                 const scoreValue = parseInt(sub.score.split('/')[0].trim(), 10);
-                
                 let remarksCell = '<td class="p-3 border text-green-600 font-bold">Sempurna! ✨</td>';
-                if (scoreValue < CORRECT_ANSWERS.length) {
-                    remarksCell = '<td class="p-3 border text-red-600 font-bold">Belajar lagi yaah!</td>';
-                }
-
-                row.innerHTML = `
-                    <td class="p-3 border font-semibold">${index + 1}</td>
-                    <td class="p-3 border">${sub.name}</td>
-                    <td class="p-3 border">${sub.score}</td>
-                    <td class="p-3 border text-sm text-gray-600">${submissionTime}</td>
-                    ${remarksCell}
-                `;
+                if (scoreValue < CORRECT_ANSWERS.length) { remarksCell = '<td class="p-3 border text-red-600 font-bold">Belajar lagi yaah!</td>'; }
+                row.innerHTML = `<td class="p-3 border font-semibold">${index + 1}</td><td class="p-3 border">${sub.name}</td><td class="p-3 border">${sub.score}</td><td class="p-3 border text-sm text-gray-600">${submissionTime}</td>${remarksCell}`;
                 leaderboardBody.appendChild(row);
             });
         }
 
-        function submitQuiz() {
-            if (GOOGLE_SHEET_URL === 'PASTE_URL_WEB_APP_ANDA_DI_SINI') {
-                alert('Konfigurasi belum selesai. Harap masukkan URL Web App Google Script di dalam file HTML.');
-                return;
-            }
+        function retryQuiz() {
+            secondChanceUsed = true;
+            document.getElementById('second-chance-prompt').classList.add('hidden');
+            showPage('quiz-page');
+            // Isi kembali jawaban sebelumnya
+            const inputs = document.querySelectorAll('#quiz-page .table-input');
+            inputs.forEach((input, index) => {
+                input.value = currentAnswers[index] || '';
+            });
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Kumpulkan Jawaban (Percobaan Kedua)';
+        }
 
+        function declineRetry() {
+            document.getElementById('second-chance-prompt').classList.add('hidden');
+            document.getElementById('student-submission-info').classList.remove('hidden');
+        }
+
+        function submitQuiz() {
             const studentName = displayStudentName.textContent;
             let score = 0;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             let allFilled = true;
+            currentAnswers = []; // Simpan jawaban percobaan ini
 
             inputs.forEach((input, index) => {
                 if (input.value.trim() === '') allFilled = false;
+                currentAnswers.push(input.value);
                 const answer = parseFloat(input.value);
-                if (!isNaN(answer) && answer === CORRECT_ANSWERS[index]) {
-                    score++;
-                }
+                if (!isNaN(answer) && answer === CORRECT_ANSWERS[index]) { score++; }
             });
 
-            if (!allFilled) {
-                alert('Harap isi semua kolom jawaban sebelum mengumpulkan.');
-                return;
-            }
+            if (!allFilled) { alert('Harap isi semua kolom jawaban sebelum mengumpulkan.'); return; }
 
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Mengirim...';
 
-            const dataToSend = {
-                nama: studentName,
-                skor: `${score} / ${CORRECT_ANSWERS.length}`
-            };
+            const dataToSend = { nama: studentName, skor: `${score} / ${CORRECT_ANSWERS.length}` };
 
-            fetch(GOOGLE_SHEET_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
-                body: JSON.stringify(dataToSend)
-            })
+            fetch(GOOGLE_SHEET_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8', }, body: JSON.stringify(dataToSend) })
             .then(() => {
                 setTimeout(() => {
                     document.getElementById('admin-controls').classList.add('hidden');
-                    document.getElementById('student-submission-info').classList.remove('hidden');
+                    
+                    // Logika untuk menampilkan opsi kesempatan kedua
+                    if (score < CORRECT_ANSWERS.length && !secondChanceUsed) {
+                        document.getElementById('second-chance-prompt').classList.remove('hidden');
+                        document.getElementById('student-submission-info').classList.add('hidden');
+                    } else {
+                        document.getElementById('student-submission-info').classList.remove('hidden');
+                        document.getElementById('second-chance-prompt').classList.add('hidden');
+                    }
+                    
                     showPage('leaderboard-page');
                 }, 1500); 
             })
-            .catch(error => {
-                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
-                console.error('Error:', error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Kumpulkan Jawaban';
-            });
+            .catch(error => { alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.'); console.error('Error:', error); submitBtn.disabled = false; submitBtn.textContent = 'Kumpulkan Jawaban'; });
         }
     </script>
 </body>
