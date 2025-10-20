@@ -213,25 +213,38 @@
 
             const dataToSend = { nama: studentName, answers: currentAnswers };
 
-            // PERBAIKAN: Mengirim data sebagai stringified JSON dalam format text/plain
-            // Ini adalah trik untuk melewati batasan CORS pada permintaan POST sederhana.
+            // PERBAIKAN: Menggunakan redirect untuk menangani CORS
+            // Ini akan membuat Apps Script merespons dengan pengalihan sementara, 
+            // yang dapat diikuti oleh browser tanpa melanggar kebijakan CORS.
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Mode no-cors tidak akan bisa membaca respons
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                redirect: 'follow', // Penting untuk mengikuti redirect dari Apps Script
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend)
             })
-            .then(() => {
-                // Karena kita tidak bisa membaca respons, kita asumsikan berhasil
-                // dan memicu pengambilan data leaderboard lagi untuk melihat hasilnya.
+            .then(response => {
+                // Setelah redirect diikuti, kita tidak bisa membaca bodynya, tapi kita tahu itu berhasil.
+                // Kita perlu mengambil data leaderboard lagi untuk mendapatkan skor terbaru.
                 setTimeout(() => {
-                    // Kita tidak tahu skornya, jadi kita tidak bisa menampilkan opsi kedua.
-                    // Ini adalah batasan dari mode 'no-cors'.
-                    // Untuk kesederhanaan, kita akan langsung tampilkan leaderboard.
-                    document.getElementById('student-submission-info').classList.remove('hidden');
-                    document.getElementById('second-chance-prompt').classList.add('hidden');
-                    showPage('leaderboard-page');
+                    document.getElementById('admin-controls').classList.add('hidden');
+                    
+                    // Kita perlu cara untuk mengetahui skor, jadi kita akan ambil dari leaderboard
+                    fetch(GOOGLE_SHEET_URL)
+                        .then(r => r.json())
+                        .then(leaderboardData => {
+                            const myData = leaderboardData.find(d => d.name === studentName);
+                            const myScore = myData ? parseInt(myData.score.split('/')[0].trim(), 10) : 0;
+                            
+                            if (myScore < TOTAL_QUESTIONS && !secondChanceUsed) {
+                                document.getElementById('second-chance-prompt').classList.remove('hidden');
+                                document.getElementById('student-submission-info').classList.add('hidden');
+                            } else {
+                                document.getElementById('student-submission-info').classList.remove('hidden');
+                                document.getElementById('second-chance-prompt').classList.add('hidden');
+                            }
+                            showPage('leaderboard-page');
+                        });
+
                 }, 1500); // Beri jeda agar Google Sheet sempat update
             })
             .catch(error => { 
