@@ -213,27 +213,23 @@
 
             const dataToSend = { nama: studentName, answers: currentAnswers };
 
-            // PERBAIKAN FINAL: Menggunakan mode 'cors' dan menangani respons JSON
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                mode: 'cors', // Mengizinkan permintaan cross-origin dan membaca respons
+                mode: 'cors',
                 cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend)
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Network response was not ok, status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
                 if(data.result === 'success') {
-                    // Beri jeda agar UI terasa lebih mulus
                     setTimeout(() => {
                         document.getElementById('admin-controls').classList.add('hidden');
-                        
-                        // Logika untuk menampilkan opsi kesempatan kedua berdasarkan skor dari server
                         if (data.score < TOTAL_QUESTIONS && !secondChanceUsed) {
                             document.getElementById('second-chance-prompt').classList.remove('hidden');
                             document.getElementById('student-submission-info').classList.add('hidden');
@@ -244,12 +240,12 @@
                         showPage('leaderboard-page');
                     }, 500);
                 } else {
-                    throw new Error(data.message || 'Unknown error from script');
+                    throw new Error(data.message || 'Unknown script error');
                 }
             })
             .catch(error => { 
                 alert('Terjadi kesalahan saat mengirim jawaban.'); 
-                console.error('Error:', error); 
+                console.error('Error during fetch:', error); 
                 submitBtn.disabled = false; 
                 submitBtn.textContent = 'Kumpulkan Jawaban'; 
             });
