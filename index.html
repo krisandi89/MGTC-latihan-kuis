@@ -115,10 +115,12 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
         const TOTAL_QUESTIONS = 22;
-        // PENTING: Ganti URL di bawah ini dengan URL Web App dari Google Apps Script yang sudah Anda deploy.
-        // URL yang benar harus berakhiran "/exec", BUKAN "/dev".
+        
+        // ===============================================================================================
+        // URL Web App dari Google Apps Script.
+        // ===============================================================================================
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwe-vCWN0ZbM4K-9nMzz5WvcecWbsjuMnXwPyXezcb1qw7K6hagz4Y1Oe8SfUdmN13dvw/exec';
-        // ---------------------------------------------
+        // ===============================================================================================
 
         const pages = document.querySelectorAll('.page');
         const displayStudentName = document.getElementById('display-student-name');
@@ -205,6 +207,11 @@
         }
 
         function submitQuiz() {
+            if (GOOGLE_SHEET_URL.includes('PASTIKAN_MENGGANTI_URL_INI')) {
+                alert('Kesalahan Konfigurasi: URL Google Sheet belum diatur. Harap hubungi admin.');
+                return;
+            }
+        
             const studentName = displayStudentName.textContent;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             let allFilled = true;
@@ -223,31 +230,27 @@
 
             const dataToSend = { nama: studentName, answers: currentAnswers };
 
-            // --- PERUBAHAN DI SINI ---
-            // Menggunakan fetch dengan cara yang lebih robust untuk menangani redirect dari Google Apps Script
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
-                redirect: 'follow', // Penting: Memberitahu fetch untuk mengikuti redirect
+                redirect: 'follow', 
                 headers: {
-                  'Content-Type': 'text/plain;charset=utf-8', // Mengirim sebagai teks biasa untuk menghindari masalah preflight CORS
+                  'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(dataToSend) // Body tetap string JSON
+                body: JSON.stringify(dataToSend)
             })
             .then(response => {
-                // Jika respons tidak OK, kita coba baca sebagai teks untuk melihat pesan error dari Google
                 if (!response.ok) {
                     return response.text().then(text => { throw new Error(text || `HTTP error! status: ${response.status}`) });
                 }
-                return response.json(); // Jika OK, kita harapkan responsnya adalah JSON
+                return response.json();
             })
             .then(data => {
                 if(data.result === 'success') {
                     setTimeout(() => {
                         document.getElementById('admin-controls').classList.add('hidden');
                         
-                        // Logika untuk menampilkan prompt coba lagi
                         if (data.score < TOTAL_QUESTIONS && !secondChanceUsed) {
                             document.getElementById('second-chance-prompt').classList.remove('hidden');
                             document.getElementById('student-submission-info').classList.add('hidden');
@@ -259,7 +262,6 @@
                         showPage('leaderboard-page');
                     }, 500);
                 } else {
-                    // Jika script Google mengembalikan result 'error'
                     throw new Error(data.message || 'Terjadi kesalahan pada skrip Google.');
                 }
             })
