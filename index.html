@@ -213,39 +213,39 @@
 
             const dataToSend = { nama: studentName, answers: currentAnswers };
 
-            // PERBAIKAN: Menggunakan redirect untuk menangani CORS
-            // Ini akan membuat Apps Script merespons dengan pengalihan sementara, 
-            // yang dapat diikuti oleh browser tanpa melanggar kebijakan CORS.
+            // PERBAIKAN FINAL: Menggunakan mode 'cors' dan menangani respons JSON
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                redirect: 'follow', // Penting untuk mengikuti redirect dari Apps Script
+                mode: 'cors', // Mengizinkan permintaan cross-origin dan membaca respons
+                cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend)
             })
             .then(response => {
-                // Setelah redirect diikuti, kita tidak bisa membaca bodynya, tapi kita tahu itu berhasil.
-                // Kita perlu mengambil data leaderboard lagi untuk mendapatkan skor terbaru.
-                setTimeout(() => {
-                    document.getElementById('admin-controls').classList.add('hidden');
-                    
-                    // Kita perlu cara untuk mengetahui skor, jadi kita akan ambil dari leaderboard
-                    fetch(GOOGLE_SHEET_URL)
-                        .then(r => r.json())
-                        .then(leaderboardData => {
-                            const myData = leaderboardData.find(d => d.name === studentName);
-                            const myScore = myData ? parseInt(myData.score.split('/')[0].trim(), 10) : 0;
-                            
-                            if (myScore < TOTAL_QUESTIONS && !secondChanceUsed) {
-                                document.getElementById('second-chance-prompt').classList.remove('hidden');
-                                document.getElementById('student-submission-info').classList.add('hidden');
-                            } else {
-                                document.getElementById('student-submission-info').classList.remove('hidden');
-                                document.getElementById('second-chance-prompt').classList.add('hidden');
-                            }
-                            showPage('leaderboard-page');
-                        });
-
-                }, 1500); // Beri jeda agar Google Sheet sempat update
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok, status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.result === 'success') {
+                    // Beri jeda agar UI terasa lebih mulus
+                    setTimeout(() => {
+                        document.getElementById('admin-controls').classList.add('hidden');
+                        
+                        // Logika untuk menampilkan opsi kesempatan kedua berdasarkan skor dari server
+                        if (data.score < TOTAL_QUESTIONS && !secondChanceUsed) {
+                            document.getElementById('second-chance-prompt').classList.remove('hidden');
+                            document.getElementById('student-submission-info').classList.add('hidden');
+                        } else {
+                            document.getElementById('student-submission-info').classList.remove('hidden');
+                            document.getElementById('second-chance-prompt').classList.add('hidden');
+                        }
+                        showPage('leaderboard-page');
+                    }, 500);
+                } else {
+                    throw new Error(data.message || 'Unknown error from script');
+                }
             })
             .catch(error => { 
                 alert('Terjadi kesalahan saat mengirim jawaban.'); 
