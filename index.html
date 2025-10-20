@@ -50,7 +50,7 @@
 <body class="text-gray-800 flex items-center justify-center min-h-screen">
 
     <div id="app" class="w-full max-w-5xl mx-auto p-4 md:p-8">
-        
+
         <div id="welcome-page" class="page active bg-white p-8 rounded-xl shadow-lg text-center">
             <h1 class="text-3xl font-bold text-gray-900 mb-8">Mendesain Jalan Tambang Untuk Kendaraan Berat</h1>
             <div class="flex flex-col md:flex-row gap-4 justify-center max-w-md mx-auto">
@@ -68,7 +68,7 @@
                  <button onclick="showPage('welcome-page')" class="mt-4 text-sm text-maroon hover:underline">Kembali</button>
              </div>
         </div>
-        
+
         <div id="student-login-page" class="page bg-white p-8 rounded-xl shadow-lg text-center">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Mulai Kuis</h1>
             <p class="text-gray-600 mb-6">Silakan isi nama lengkap Anda</p>
@@ -93,7 +93,7 @@
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
                 <div class="text-center mb-6"><h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1><p id="leaderboard-subtitle" class="text-gray-600">Menampilkan data dari Google Sheet.</p></div>
                 <div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead class="bg-gray-100"><tr><th class="p-3 font-semibold text-gray-700 border">Peringkat</th><th class="p-3 font-semibold text-gray-700 border">Nama Mahasiswa</th><th class="p-3 font-semibold text-gray-700 border">Skor</th><th class="p-3 font-semibold text-gray-700 border">Waktu Mengumpulkan</th><th class="p-3 font-semibold text-gray-700 border">Keterangan</th></tr></thead><tbody id="leaderboard-body"></tbody></table></div>
-                
+
                 <div id="second-chance-prompt" class="hidden mt-6 text-center border-t pt-6">
                     <h3 class="text-lg font-semibold text-gray-800">Skor Anda belum sempurna.</h3>
                     <p class="text-gray-600 my-2">Ingin mencoba memperbaikinya? Anda hanya punya **SATU** kesempatan lagi.</p>
@@ -115,7 +115,7 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
         const TOTAL_QUESTIONS = 22;
-        
+
         // ===============================================================================================
         // URL Web App dari Google Apps Script.
         // ===============================================================================================
@@ -127,13 +127,13 @@
         let leaderboardInterval = null;
         let currentAnswers = [];
         let secondChanceUsed = false;
-        
+
         function showPage(pageId) {
             if (leaderboardInterval) { clearInterval(leaderboardInterval); leaderboardInterval = null; }
             pages.forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'leaderboard-page') {
-                fetchAndShowLeaderboard(); 
+                fetchAndShowLeaderboard();
                 leaderboardInterval = setInterval(fetchAndShowLeaderboard, 3000);
             }
         }
@@ -147,14 +147,17 @@
                 showPage('leaderboard-page');
             } else { alert('Username atau password salah!'); }
         }
-        
-        function logout() { showPage('welcome-page'); }
+
+        function logout() {
+            document.getElementById('admin-controls').classList.add('hidden');
+            showPage('welcome-page');
+        }
 
         function startQuiz() {
             const studentName = document.getElementById('student-name').value.trim();
             if (studentName === '') { alert('Nama tidak boleh kosong!'); return; }
             displayStudentName.textContent = studentName;
-            
+
             secondChanceUsed = false;
             currentAnswers = [];
             document.querySelectorAll('#quiz-page .table-input').forEach(input => input.value = '');
@@ -175,7 +178,7 @@
 
         function updateLeaderboard(data) {
             const leaderboardBody = document.getElementById('leaderboard-body');
-            leaderboardBody.innerHTML = ''; 
+            leaderboardBody.innerHTML = '';
             if (!data || data.length === 0 || data.error) { leaderboardBody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-500">Belum ada data.</td></tr>'; return; }
             data.forEach((sub, index) => {
                 const row = document.createElement('tr');
@@ -192,10 +195,10 @@
             secondChanceUsed = true;
             document.getElementById('second-chance-prompt').classList.add('hidden');
             showPage('quiz-page');
-            
+
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             inputs.forEach((input, index) => { input.value = currentAnswers[index] || ''; });
-            
+
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Kumpulkan Jawaban (Percobaan Kedua)';
@@ -211,7 +214,7 @@
                 alert('Kesalahan Konfigurasi: URL Google Sheet belum diatur. Harap hubungi admin.');
                 return;
             }
-        
+
             const studentName = displayStudentName.textContent;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             let allFilled = true;
@@ -234,7 +237,7 @@
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
-                redirect: 'follow', 
+                redirect: 'follow',
                 headers: {
                   'Content-Type': 'application/json',
                 },
@@ -250,7 +253,7 @@
                 if(data.result === 'success') {
                     setTimeout(() => {
                         document.getElementById('admin-controls').classList.add('hidden');
-                        
+
                         if (data.score < TOTAL_QUESTIONS && !secondChanceUsed) {
                             document.getElementById('second-chance-prompt').classList.remove('hidden');
                             document.getElementById('student-submission-info').classList.add('hidden');
@@ -258,21 +261,20 @@
                             document.getElementById('student-submission-info').classList.remove('hidden');
                             document.getElementById('second-chance-prompt').classList.add('hidden');
                         }
-                        
+
                         showPage('leaderboard-page');
                     }, 500);
                 } else {
                     throw new Error(data.message || 'Terjadi kesalahan pada skrip Google.');
                 }
             })
-            .catch(error => { 
-                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.'); 
-                console.error('Error during fetch:', error); 
-                submitBtn.disabled = false; 
-                submitBtn.textContent = 'Kumpulkan Jawaban'; 
+            .catch(error => {
+                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
+                console.error('Error during fetch:', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kumpulkan Jawaban';
             });
         }
     </script>
 </body>
 </html>
-
