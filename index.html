@@ -94,7 +94,6 @@
                 <div class="text-center mb-6"><h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1><p id="leaderboard-subtitle" class="text-gray-600">Menampilkan data dari Google Sheet.</p></div>
                 <div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead class="bg-gray-100"><tr><th class="p-3 font-semibold text-gray-700 border">Peringkat</th><th class="p-3 font-semibold text-gray-700 border">Nama Mahasiswa</th><th class="p-3 font-semibold text-gray-700 border">Skor</th><th class="p-3 font-semibold text-gray-700 border">Waktu Mengumpulkan</th><th class="p-3 font-semibold text-gray-700 border">Keterangan</th></tr></thead><tbody id="leaderboard-body"></tbody></table></div>
                 
-                <!-- Fitur Coba Lagi -->
                 <div id="second-chance-prompt" class="hidden mt-6 text-center border-t pt-6">
                     <h3 class="text-lg font-semibold text-gray-800">Skor Anda belum sempurna.</h3>
                     <p class="text-gray-600 my-2">Ingin mencoba memperbaikinya? Anda hanya punya **SATU** kesempatan lagi.</p>
@@ -116,6 +115,8 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
         const TOTAL_QUESTIONS = 22;
+        // PENTING: Ganti URL di bawah ini dengan URL Web App dari Google Apps Script yang sudah Anda deploy.
+        // URL yang benar harus berakhiran "/exec", BUKAN "/dev".
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwe-vCWN0ZbM4K-9nMzz5WvcecWbsjuMnXwPyXezcb1qw7K6hagz4Y1Oe8SfUdmN13dvw/exec';
         // ---------------------------------------------
 
@@ -152,7 +153,6 @@
             if (studentName === '') { alert('Nama tidak boleh kosong!'); return; }
             displayStudentName.textContent = studentName;
             
-            // Reset state untuk percobaan baru
             secondChanceUsed = false;
             currentAnswers = [];
             document.querySelectorAll('#quiz-page .table-input').forEach(input => input.value = '');
@@ -191,7 +191,6 @@
             document.getElementById('second-chance-prompt').classList.add('hidden');
             showPage('quiz-page');
             
-            // Isi kembali jawaban sebelumnya
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             inputs.forEach((input, index) => { input.value = currentAnswers[index] || ''; });
             
@@ -209,7 +208,7 @@
             const studentName = displayStudentName.textContent;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             let allFilled = true;
-            currentAnswers = []; // Simpan jawaban saat ini untuk fitur retry
+            currentAnswers = [];
 
             inputs.forEach(input => {
                 if (input.value.trim() === '') allFilled = false;
@@ -224,18 +223,24 @@
 
             const dataToSend = { nama: studentName, answers: currentAnswers };
 
+            // --- PERUBAHAN DI SINI ---
+            // Menggunakan fetch dengan cara yang lebih robust untuk menangani redirect dari Google Apps Script
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSend)
+                redirect: 'follow', // Penting: Memberitahu fetch untuk mengikuti redirect
+                headers: {
+                  'Content-Type': 'text/plain;charset=utf-8', // Mengirim sebagai teks biasa untuk menghindari masalah preflight CORS
+                },
+                body: JSON.stringify(dataToSend) // Body tetap string JSON
             })
             .then(response => {
+                // Jika respons tidak OK, kita coba baca sebagai teks untuk melihat pesan error dari Google
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.text().then(text => { throw new Error(text || `HTTP error! status: ${response.status}`) });
                 }
-                return response.json();
+                return response.json(); // Jika OK, kita harapkan responsnya adalah JSON
             })
             .then(data => {
                 if(data.result === 'success') {
@@ -254,11 +259,12 @@
                         showPage('leaderboard-page');
                     }, 500);
                 } else {
-                    throw new Error(data.message || 'Unknown script error');
+                    // Jika script Google mengembalikan result 'error'
+                    throw new Error(data.message || 'Terjadi kesalahan pada skrip Google.');
                 }
             })
             .catch(error => { 
-                alert('Terjadi kesalahan saat mengirim jawaban.'); 
+                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.'); 
                 console.error('Error during fetch:', error); 
                 submitBtn.disabled = false; 
                 submitBtn.textContent = 'Kumpulkan Jawaban'; 
@@ -267,6 +273,4 @@
     </script>
 </body>
 </html>
-
-
 
