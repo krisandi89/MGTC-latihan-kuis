@@ -76,7 +76,7 @@
                 <label for="student-name" class="block text-left text-sm font-medium text-gray-700 mb-2">Nama Lengkap Mahasiswa</label>
                 <input type="text" id="student-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-800 focus:border-red-800" placeholder="Masukkan nama Anda...">
                 <button onclick="startQuiz()" class="w-full mt-6 btn-maroon text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 shadow-sm">Mulai</button>
-                 <button onclick="showPage('welcome-page')" class="mt-4 text-sm text-maroon hover:underline">Kembali</button>
+                <button onclick="showPage('welcome-page')" class="mt-4 text-sm text-maroon hover:underline">Kembali</button>
             </div>
         </div>
 
@@ -94,6 +94,7 @@
                 <div class="text-center mb-6"><h1 class="text-3xl font-bold text-gray-900">Leaderboard</h1><p id="leaderboard-subtitle" class="text-gray-600">Menampilkan data dari Google Sheet.</p></div>
                 <div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead class="bg-gray-100"><tr><th class="p-3 font-semibold text-gray-700 border">Peringkat</th><th class="p-3 font-semibold text-gray-700 border">Nama Mahasiswa</th><th class="p-3 font-semibold text-gray-700 border">Skor</th><th class="p-3 font-semibold text-gray-700 border">Waktu Mengumpulkan</th><th class="p-3 font-semibold text-gray-700 border">Keterangan</th></tr></thead><tbody id="leaderboard-body"></tbody></table></div>
                 
+                <!-- Fitur Coba Lagi -->
                 <div id="second-chance-prompt" class="hidden mt-6 text-center border-t pt-6">
                     <h3 class="text-lg font-semibold text-gray-800">Skor Anda belum sempurna.</h3>
                     <p class="text-gray-600 my-2">Ingin mencoba memperbaikinya? Anda hanya punya **SATU** kesempatan lagi.</p>
@@ -115,7 +116,7 @@
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
         const TOTAL_QUESTIONS = 22;
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwe-vCWN0ZbM4K-9nMzz5WvcecWbsjuMnXwPyXezcb1qw7K6hagz4Y1Oe8SfUdmN13dvw/exec';
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwC6xed7O-UqPCtpXUJYKCfpt0PKr8LpiB-WW5qObNZ/dev';
         // ---------------------------------------------
 
         const pages = document.querySelectorAll('.page');
@@ -150,9 +151,15 @@
             const studentName = document.getElementById('student-name').value.trim();
             if (studentName === '') { alert('Nama tidak boleh kosong!'); return; }
             displayStudentName.textContent = studentName;
+            
+            // Reset state untuk percobaan baru
             secondChanceUsed = false;
             currentAnswers = [];
             document.querySelectorAll('#quiz-page .table-input').forEach(input => input.value = '');
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Kumpulkan Jawaban';
+
             showPage('quiz-page');
         }
 
@@ -183,8 +190,11 @@
             secondChanceUsed = true;
             document.getElementById('second-chance-prompt').classList.add('hidden');
             showPage('quiz-page');
+            
+            // Isi kembali jawaban sebelumnya
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             inputs.forEach((input, index) => { input.value = currentAnswers[index] || ''; });
+            
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Kumpulkan Jawaban (Percobaan Kedua)';
@@ -199,7 +209,7 @@
             const studentName = displayStudentName.textContent;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             let allFilled = true;
-            currentAnswers = [];
+            currentAnswers = []; // Simpan jawaban saat ini untuk fitur retry
 
             inputs.forEach(input => {
                 if (input.value.trim() === '') allFilled = false;
@@ -231,6 +241,8 @@
                 if(data.result === 'success') {
                     setTimeout(() => {
                         document.getElementById('admin-controls').classList.add('hidden');
+                        
+                        // Logika untuk menampilkan prompt coba lagi
                         if (data.score < TOTAL_QUESTIONS && !secondChanceUsed) {
                             document.getElementById('second-chance-prompt').classList.remove('hidden');
                             document.getElementById('student-submission-info').classList.add('hidden');
@@ -238,6 +250,7 @@
                             document.getElementById('student-submission-info').classList.remove('hidden');
                             document.getElementById('second-chance-prompt').classList.add('hidden');
                         }
+                        
                         showPage('leaderboard-page');
                     }, 500);
                 } else {
