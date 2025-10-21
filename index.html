@@ -114,7 +114,7 @@
         // --- KONFIGURASI ---
         const ADMIN_USERNAME = 'admin';
         const ADMIN_PASSWORD = 'password123';
-        const TOTAL_QUESTIONS = 22;
+        const CORRECT_ANSWERS = [ 535, 455, 430, 410, 16, 43, 56, 30, 44, 51, 17, 43, 56, 28, 41, 48, 14, 34, 47, 18, 28, 35 ];
         const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwe-vCWN0ZbM4K-9nMzz5WvcecWbsjuMnXwPyXezcb1qw7K6hagz4Y1Oe8SfUdmN13dvw/exec';
         // ---------------------------------------------
 
@@ -140,6 +140,7 @@
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 document.getElementById('admin-controls').classList.remove('hidden');
                 document.getElementById('student-submission-info').classList.add('hidden');
+                document.getElementById('second-chance-prompt').classList.add('hidden');
                 showPage('leaderboard-page');
             } else { alert('Username atau password salah!'); }
         }
@@ -153,6 +154,9 @@
             secondChanceUsed = false;
             currentAnswers = [];
             document.querySelectorAll('#quiz-page .table-input').forEach(input => input.value = '');
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Kumpulkan Jawaban';
             showPage('quiz-page');
         }
 
@@ -173,7 +177,7 @@
                 const time = new Date(sub.timestamp).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
                 const scoreValue = parseInt(sub.score.split('/')[0].trim(), 10);
                 let remarks = '<td class="p-3 border text-green-600 font-bold">Sempurna! ✨</td>';
-                if (scoreValue < TOTAL_QUESTIONS) { remarks = '<td class="p-3 border text-red-600 font-bold">Belajar lagi yaah!</td>'; }
+                if (scoreValue < CORRECT_ANSWERS.length) { remarks = '<td class="p-3 border text-red-600 font-bold">Belajar lagi yaah!</td>'; }
                 row.innerHTML = `<td class="p-3 border font-semibold">${index + 1}</td><td class="p-3 border">${sub.name}</td><td class="p-3 border">${sub.score}</td><td class="p-3 border text-sm text-gray-600">${time}</td>${remarks}`;
                 leaderboardBody.appendChild(row);
             });
@@ -197,13 +201,16 @@
 
         function submitQuiz() {
             const studentName = displayStudentName.textContent;
+            let score = 0;
             const inputs = document.querySelectorAll('#quiz-page .table-input');
             let allFilled = true;
             currentAnswers = [];
 
-            inputs.forEach(input => {
+            inputs.forEach((input, index) => {
                 if (input.value.trim() === '') allFilled = false;
                 currentAnswers.push(input.value);
+                const answer = parseFloat(input.value);
+                if (!isNaN(answer) && answer === CORRECT_ANSWERS[index]) { score++; }
             });
 
             if (!allFilled) { alert('Harap isi semua kolom jawaban.'); return; }
@@ -212,41 +219,32 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Mengirim...';
 
-            const dataToSend = { nama: studentName, answers: currentAnswers };
+            const dataToSend = { nama: studentName, skor: `${score} / ${CORRECT_ANSWERS.length}` };
 
             fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                mode: 'cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(dataToSend)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if(data.result === 'success') {
-                    setTimeout(() => {
-                        document.getElementById('admin-controls').classList.add('hidden');
-                        if (data.score < TOTAL_QUESTIONS && !secondChanceUsed) {
-                            document.getElementById('second-chance-prompt').classList.remove('hidden');
-                            document.getElementById('student-submission-info').classList.add('hidden');
-                        } else {
-                            document.getElementById('student-submission-info').classList.remove('hidden');
-                            document.getElementById('second-chance-prompt').classList.add('hidden');
-                        }
-                        showPage('leaderboard-page');
-                    }, 500);
-                } else {
-                    throw new Error(data.message || 'Unknown script error');
-                }
+            .then(() => {
+                setTimeout(() => {
+                    document.getElementById('admin-controls').classList.add('hidden');
+                    
+                    if (score < CORRECT_ANSWERS.length && !secondChanceUsed) {
+                        document.getElementById('second-chance-prompt').classList.remove('hidden');
+                        document.getElementById('student-submission-info').classList.add('hidden');
+                    } else {
+                        document.getElementById('student-submission-info').classList.remove('hidden');
+                        document.getElementById('second-chance-prompt').classList.add('hidden');
+                    }
+                    
+                    showPage('leaderboard-page');
+                }, 1500); 
             })
             .catch(error => { 
                 alert('Terjadi kesalahan saat mengirim jawaban.'); 
-                console.error('Error during fetch:', error); 
+                console.error('Error:', error); 
                 submitBtn.disabled = false; 
                 submitBtn.textContent = 'Kumpulkan Jawaban'; 
             });
@@ -254,5 +252,4 @@
     </script>
 </body>
 </html>
-
 
